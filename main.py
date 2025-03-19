@@ -7,6 +7,7 @@ from sys import exit
 
 pygame.init()
 
+#inicializacion de variables
 snake = pygame.sprite.GroupSingle()
 apples = pygame.sprite.GroupSingle()
 snake.add(Snake())
@@ -18,11 +19,11 @@ apple_y = 0
 table.insert_at(x, y, 1)
 px_of_square = 306
 keep_game = True
-last_key_pressed = pygame.K_DOWN
+last_key_pressed = pygame.K_DOWN # movimiento predeterminado de la serpiente
 
 clock = pygame.time.Clock()
 last_time_moved = 0
-snake_speed = 700
+snake_speed = 300 #medido en ms
 spawn_apple_speed = 3000
 last_eaten_time = 0
 
@@ -35,6 +36,8 @@ while keep_game:
     current_time = pygame.time.get_ticks()
     keys = pygame.key.get_pressed()
     screen.fill((0,0,0))
+    snake_body = snake.sprite.body_sprites
+    snake_body.draw(screen)
     snake.draw(screen)
     apples.draw(screen)
 
@@ -59,7 +62,10 @@ while keep_game:
 
         if apples.sprite and pygame.Rect.colliderect(apples.sprite.rect, snake.sprite.rect):
             apples.sprite.kill()
-            snake.sprite.node(table)
+            snake.sprite.new_body()
+            
+        if pygame.sprite.spritecollide(snake.sprite,snake_body, True):
+             keep_game = False
 
     if current_time - last_eaten_time > spawn_apple_speed and table.get_element_position(2) == []:
             table.insert_apple()
